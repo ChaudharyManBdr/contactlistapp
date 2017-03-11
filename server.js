@@ -1,43 +1,45 @@
 var express = require('express');
 var app = express();
 
+var mongojs = require('mongojs');
+var db = mongojs('contactlist', ['contactlist']);
+
+var bodyParser = require('body-parser')
+
 // app.get('/', function(req, res){
 // 	res.send("Hello world from server.js")
 // });
 
 app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.json());
 
 app.get('/contactList', function(req, res){
-	console.log('I received a GET reqeust')
+	console.log('I received a GET reqeust');
+	db.contactlist.find(function(err, docs){
+		console.log(docs);
+		res.json(docs);
 
-	person1 = {
-		name : 'Manab',
-		email : 'manab@yahoo.com',
-		number : '111-111-111'
-	};
+	})	
 
-	person2 = {
-		name : 'Puja',
-		email : 'puja@yahoo.com',
-		number : '222-222-222'
-	};
-
-	person3 = {
-		name : 'Rita',
-		email : 'Rita@yahoo.com',
-		number : '333-333-333'
-	};
-	person4 = {
-		name : 'Rita',
-		email : 'Rita@yahoo.com',
-		number : '444-333-333'
-	};
-
-	var contacts = [person1, person2, person3, person4];
-	//$scope.contactList = contacts;
-	res.json(contacts);
 })
 
+app.post('/contactList', function(req, res){
+	console.log(req.body);
+	db.contactlist.insert(req.body, function(err, docs){
+		res.json(docs);
+	})
+})
+
+app.delete('/contactList/:id', function(req, res){
+	var id = req.params.id;
+	console.log(id);
+	db.contactlist.remove({_id: mongojs.ObjectId(id)}, function(err, doc){
+		res.json(doc);
+	})
+})
 app.listen(3000);
 console.log("Server running on port 3000");
+
+
+
 
