@@ -1,3 +1,4 @@
+
 var app = angular.module('myApp', []);
 app.controller('AppCtrl', function($scope, $http){
 	console.log("Hello World from controller");
@@ -22,10 +23,28 @@ app.controller('AppCtrl', function($scope, $http){
 
 	$scope.remove = function(id){
 		console.log(id);
-		$http.delete('/contactList' + id).success(function(response){
+		$http.delete('/contactList/'+id).success(function(response){
 			refresh();
 		})
 	};
+
+	$scope.edit = function(id){
+		console.log(id);
+		$http.get('/contactList/'+id).success(function(response){
+			$scope.contact = response; 
+		})
+	};
+
+	$scope.update = function(){
+		console.log($scope.contact._id);
+		$http.put('/contactList/' + $scope.contact._id, $scope.contact).success(function(response){
+			refresh();
+		})
+	}
+	
+	$scope.deselect = function(){
+		$scope.contact = "";
+	}
 
 	
 });
